@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>Team — GOLDEN TRAFF</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg-dark: #0a0a0a;
+      --bg-card: rgba(22, 22, 22, 0.72);
+      --gold: #d4af37;
+      --gold-dim: #b8860b;
+      --gold-glow: rgba(212, 175, 55, 0.25);
+      --glass: rgba(255, 255, 255, 0.06);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --text: #f5f5f5;
+      --text-muted: rgba(255, 255, 255, 0.55);
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      min-height: 100dvh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    #app {
+      min-height: 100dvh;
+      background: var(--bg-dark);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    #app.visible {
+      opacity: 1;
+    }
+
+    .sunrise-bg {
+      position: fixed;
+      inset: 0;
+      background: url('https://sun9-36.userapi.com/s/v1/ig2/QbzKl6EeocvMgRIIMlqihPBN8Qe72T9Kym8WJTL4zR0UyXNVwwvvO1bzTSEAQ5gUX1PBl_6lH25pssomaBBX8OmC.jpg?quality=95&as=32x69,48x104,72x156,108x234,160x347,240x521,360x781,480x1041,540x1172,590x1280&from=bu&cs=590x0') center/cover no-repeat;
+      opacity: 0.22;
+      z-index: 0;
+    }
+
+    .app-content {
+      position: relative;
+      z-index: 1;
+      padding: calc(var(--safe-top) + 8px) 16px calc(var(--safe-bottom) + 16px);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .golden-label {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .golden-label span {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .dynamic-island {
+      display: flex;
+      background: var(--bg-card);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-radius: 28px;
+      padding: 6px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dynamic-island .slider {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      width: calc(33.333% - 4px);
+      height: calc(100% - 12px);
+      background: linear-gradient(135deg, var(--glass) 0%, rgba(212, 175, 55, 0.12) 100%);
+      border-radius: 22px;
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 0;
+    }
+
+    .dynamic-island .slider.to-center {
+      transform: translateX(100%);
+    }
+
+    .dynamic-island .slider.to-right {
+      transform: translateX(200%);
+    }
+
+    .tab-btn {
+      flex: 1;
+      position: relative;
+      z-index: 1;
+      padding: 10px 12px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 22px;
+      transition: color 0.2s ease;
+    }
+
+    .tab-btn.active {
+      color: var(--gold);
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .sum-hero {
+      text-align: center;
+      margin: 24px 0 32px;
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .sum-hero .value {
+      font-size: 56px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .sum-hero .currency {
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--gold-dim);
+    }
+
+    .sum-hero .personal {
+      display: block;
+      width: 100%;
+      margin-top: 16px;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .sum-hero .personal-value {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .sub-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .sub-tab {
+      flex: 1;
+      padding: 10px 14px;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .sub-tab.active {
+      background: rgba(212, 175, 55, 0.15);
+      border-color: rgba(212, 175, 55, 0.35);
+      color: var(--gold);
+    }
+
+    .leaderboard-card {
+      background: rgba(20, 20, 20, 0.25);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .leaderboard-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.5), transparent);
+    }
+
+    .leaderboard-card h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 12px;
+      border-radius: 14px;
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .leaderboard-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.08), transparent);
+      transition: left 0.4s ease;
+    }
+
+    .leaderboard-item:hover {
+      transform: translateX(4px);
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(212, 175, 55, 0.2);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .leaderboard-item:hover::before {
+      left: 100%;
+    }
+
+    .leaderboard-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .leaderboard-rank {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 2px solid var(--glass-border);
+      color: var(--text);
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .leaderboard-rank.gold {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+      border-color: var(--gold);
+      color: #0a0a0a;
+      box-shadow: 0 0 20px var(--gold-glow), 0 4px 12px rgba(0, 0, 0, 0.3);
+      animation: pulse-gold 2s ease-in-out infinite;
+    }
+
+    .leaderboard-rank.silver {
+      background: linear-gradient(135deg, #c0c0c0 0%, #808080 100%);
+      border-color: #c0c0c0;
+      color: #0a0a0a;
+      box-shadow: 0 0 16px rgba(192, 192, 192, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .leaderboard-rank.bronze {
+      background: linear-gradient(135deg, #cd7f32 0%, #8b4513 100%);
+      border-color: #cd7f32;
+      color: #fff;
+      box-shadow: 0 0 16px rgba(205, 127, 50, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    @keyframes pulse-gold {
+      0%, 100% { box-shadow: 0 0 20px var(--gold-glow), 0 4px 12px rgba(0, 0, 0, 0.3); }
+      50% { box-shadow: 0 0 30px var(--gold-glow), 0 4px 12px rgba(0, 0, 0, 0.3); }
+    }
+
+    .leaderboard-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 2px solid var(--glass-border);
+      flex-shrink: 0;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .leaderboard-item:hover .leaderboard-avatar {
+      transform: scale(1.1);
+    }
+
+    .leaderboard-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .leaderboard-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .leaderboard-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .leaderboard-stats {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .leaderboard-deals {
+      text-align: right;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .tasks-btn {
+      position: relative;
+      width: 100%;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(184, 134, 11, 0.2) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      border-radius: 20px;
+      color: var(--gold);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.25s ease, transform 0.1s ease;
+      box-shadow: 0 0 24px var(--gold-glow);
+      margin-bottom: 16px;
+    }
+
+    .tasks-btn:active {
+      transform: scale(0.98);
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 10px;
+      height: 10px;
+      background: #f87171;
+      border-radius: 50%;
+      border: 2px solid var(--bg-card);
+      box-shadow: 0 0 8px rgba(248, 113, 113, 0.6);
+      animation: pulse-notification 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-notification {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+      }
+    }
+
+    .deals-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .deal-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: transform 0.2s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .deal-card:active {
+      transform: scale(0.98);
+    }
+
+    .deal-status-indicator {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid var(--bg-card);
+    }
+
+    .deal-status-indicator.success {
+      background: var(--gold);
+      box-shadow: 0 0 8px var(--gold-glow);
+    }
+
+    .deal-status-indicator.failed {
+      background: #f87171;
+      box-shadow: 0 0 8px rgba(248, 113, 113, 0.4);
+    }
+
+    .deal-user {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .deal-user span {
+      color: var(--text-muted);
+      font-weight: 400;
+      font-size: 13px;
+    }
+
+    .deal-sum {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: -0.02em;
+    }
+
+    .add-deal-btn {
+      width: 100%;
+      padding: 18px 20px;
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(184, 134, 11, 0.2) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      border-radius: 20px;
+      color: var(--gold);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.25s ease, transform 0.1s ease;
+      box-shadow: 0 0 24px var(--gold-glow);
+    }
+
+    .add-deal-btn:active {
+      transform: scale(0.98);
+    }
+
+    .profile-card {
+      background: rgba(20, 20, 20, 0.25);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .profile-bonus-card, .profile-goal-card {
+      background: rgba(20, 20, 20, 0.25);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .profile-bonus-card.expanded, .profile-goal-card.expanded {
+      padding-bottom: 20px;
+    }
+
+    .profile-bonus-header, .profile-goal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .profile-bonus-title, .profile-goal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profile-bonus-value, .profile-goal-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-top: 8px;
+    }
+
+    .profile-bonus-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+      opacity: 0;
+      margin-top: 0;
+    }
+
+    .profile-bonus-card.expanded .profile-bonus-content {
+      max-height: 1000px;
+      opacity: 1;
+      margin-top: 16px;
+    }
+
+    .profile-bonus-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .profile-bonus-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .profile-bonus-item-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .profile-bonus-item-reward {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .profile-goal-text {
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--text);
+      margin-top: 8px;
+    }
+
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      background: var(--glass);
+      border: 3px solid var(--gold);
+      overflow: hidden;
+      box-shadow: 0 0 24px var(--gold-glow);
+    }
+
+    .profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .profile-avatar .placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      color: var(--gold);
+    }
+
+    .profile-name {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .profile-username {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .profile-stats {
+      display: flex;
+      justify-content: space-around;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .profile-stat {
+      text-align: center;
+    }
+
+    .profile-stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .profile-stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0 16px var(--safe-bottom) 16px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .popup-overlay.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .popup {
+      width: 100%;
+      max-width: 480px;
+      background: var(--bg-card);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px 24px 0 0;
+      padding: 24px 20px calc(var(--safe-bottom) + 24px);
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .popup-overlay.visible .popup {
+      transform: translateY(0);
+    }
+
+    .popup h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+
+    .popup input, .popup textarea {
+      width: 100%;
+      padding: 16px 18px;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      color: var(--text);
+      font-size: 16px;
+      margin-bottom: 16px;
+      outline: none;
+      transition: border-color 0.2s ease;
+      font-family: inherit;
+    }
+
+    .popup textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .popup input::placeholder, .popup textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    .popup input:focus, .popup textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px var(--gold-glow);
+    }
+
+    .popup-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .popup-actions button {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease, transform 0.1s ease;
+      border: none;
+    }
+
+    .popup-actions button:active {
+      transform: scale(0.95);
+    }
+
+    .popup-cancel {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      color: var(--text-muted);
+    }
+
+    .popup-submit {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+      color: #0a0a0a;
+    }
+
+    .popup-status-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .popup-status-btn {
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease, transform 0.1s ease;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .popup-status-btn:active {
+      transform: scale(0.95);
+    }
+
+    .popup-status-btn.success {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+      color: #0a0a0a;
+      box-shadow: 0 4px 20px var(--gold-glow);
+    }
+
+    .popup-status-btn.failed {
+      background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(248, 113, 113, 0.4);
+    }
+
+    .task-item {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .task-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .task-description {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .task-reward {
+      font-size: 14px;
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .task-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .task-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .task-btn.complete {
+      background: var(--gold);
+      color: #0a0a0a;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="sunrise-bg" aria-hidden="true"></div>
+    <div class="app-content">
+      <div class="golden-label"><span>GOLDEN TRAFF</span></div>
+
+      <div class="dynamic-island">
+        <div class="slider" id="islandSlider"></div>
+        <button type="button" class="tab-btn active" data-tab="sum">Сумма</button>
+        <button type="button" class="tab-btn" data-tab="deals">Сделки</button>
+        <button type="button" class="tab-btn" data-tab="profile">Профиль</button>
+      </div>
+
+      <!-- Screen: Сумма -->
+      <div class="screen active" id="screen-sum">
+        <div class="sum-hero">
+          <div class="value" id="heroSumAll">0</div>
+          <div class="currency">₽</div>
+        </div>
+        <div class="sum-hero">
+          <div class="personal">Личный доход: <span class="personal-value" id="heroSumPersonal">0 ₽</span></div>
+        </div>
+        <div class="sub-tabs">
+          <button type="button" class="sub-tab active" data-period="all">Все время</button>
+          <button type="button" class="sub-tab" data-period="month">Месяц</button>
+          <button type="button" class="sub-tab" data-period="day">День</button>
+        </div>
+        <div class="leaderboard-card" id="leaderboardCard">
+          <h3>Турнирная таблица</h3>
+          <div id="leaderboardList"></div>
+        </div>
+        <button type="button" class="tasks-btn" id="tasksBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          Задания
+        </button>
+      </div>
+
+      <!-- Screen: Сделки -->
+      <div class="screen" id="screen-deals">
+        <div class="deals-list" id="dealsList"></div>
+        <button type="button" class="add-deal-btn" id="addDealBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 22px; height: 22px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Добавить сделку
+        </button>
+      </div>
+
+      <!-- Screen: Профиль -->
+      <div class="screen" id="screen-profile">
+        <div class="profile-card">
+          <div class="profile-avatar" id="profileAvatar">
+            <div class="placeholder">👤</div>
+          </div>
+          <div class="profile-name" id="profileName">Загрузка...</div>
+          <div class="profile-username" id="profileUsername">@username</div>
+          <div class="profile-stats">
+            <div class="profile-stat">
+              <div class="profile-stat-value" id="profileDeals">0</div>
+              <div class="profile-stat-label">Сделок</div>
+            </div>
+            <div class="profile-stat">
+              <div class="profile-stat-value" id="profileAmount">0 ₽</div>
+              <div class="profile-stat-label">Заработано</div>
+            </div>
+            <div class="profile-stat">
+              <div class="profile-stat-value" id="profileActivity">0%</div>
+              <div class="profile-stat-label">Активность</div>
+            </div>
+          </div>
+        </div>
+        <div class="profile-bonus-card" id="profileBonusCard">
+          <div class="profile-bonus-header" id="profileBonusHeader">
+            <div class="profile-bonus-title">
+              <span>🎁</span>
+              <span>Бонусы</span>
+            </div>
+            <div class="profile-bonus-value" id="profileBonusValue">0 ₽</div>
+          </div>
+          <div class="profile-bonus-content" id="profileBonusContent">
+            <div id="profileBonusList"></div>
+          </div>
+        </div>
+        <div class="profile-goal-card" id="profileGoalCard">
+          <div class="profile-goal-header">
+            <div class="profile-goal-title">
+              <span>🎯</span>
+              <span>Еженедельная цель</span>
+            </div>
+          </div>
+          <div class="profile-goal-text" id="profileGoalText">Цель не установлена</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup: добавить сделку -->
+  <div class="popup-overlay" id="addDealPopup">
+    <div class="popup">
+      <h2>Новая сделка</h2>
+      <input type="text" id="dealUsername" placeholder="@username в Telegram" autocomplete="off" maxlength="64">
+      <div class="popup-actions">
+        <button type="button" class="popup-cancel" id="cancelDealBtn">Отмена</button>
+        <button type="button" class="popup-submit" id="submitDealBtn">Добавить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup: подтвердить сделку -->
+  <div class="popup-overlay" id="confirmDealPopup">
+    <div class="popup">
+      <h2>Подтвердить сделку</h2>
+      <div class="popup-status-actions">
+        <button type="button" class="popup-status-btn success" id="successDealBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;"><path d="M20 6L9 17l-5-5"/></svg>
+          Успешно
+        </button>
+        <button type="button" class="popup-status-btn failed" id="failedDealBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Провалено
+        </button>
+      </div>
+      <div class="popup-actions" style="margin-top: 12px;">
+        <button type="button" class="popup-cancel" id="cancelConfirmBtn">Отмена</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup: удалить сделку -->
+  <div class="popup-overlay" id="deleteDealPopup">
+    <div class="popup">
+      <h2>Удалить сделку?</h2>
+      <div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 20px; line-height: 1.5;">
+        Вы уверены, что хотите удалить эту сделку? Это действие нельзя отменить.
+      </div>
+      <div class="popup-actions">
+        <button type="button" class="popup-cancel" id="cancelDeleteBtn">Отмена</button>
+        <button type="button" class="popup-submit" style="background: linear-gradient(135deg, #f87171 0%, #dc2626 100%); color: #fff;" id="confirmDeleteBtn">Удалить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup: задания -->
+  <div class="popup-overlay" id="tasksPopup">
+    <div class="popup">
+      <h2>Задания</h2>
+      <div id="tasksList"></div>
+      <div class="popup-actions" style="margin-top: 12px;">
+        <button type="button" class="popup-cancel" id="closeTasksBtn">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.BACKEND_URL = 'https://uhbhudbfv-5.onrender.com/';
+    
+    // Инициализация Telegram WebApp
+    let tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
+
+    // Получение данных пользователя из Telegram
+    let currentUser = {
+      id: null,
+      username: 'user',
+      firstName: 'Пользователь',
+      lastName: '',
+      avatar: null
+    };
+
+    if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+      const user = tg.initDataUnsafe.user;
+      currentUser.id = user.id;
+      currentUser.username = user.username || 'user';
+      currentUser.firstName = user.first_name || 'Пользователь';
+      currentUser.lastName = user.last_name || '';
+      currentUser.avatar = user.photo_url || null;
+    }
+
+    // API для командного приложения
+    (function() {
+      var base = (window.BACKEND_URL || '').replace(/\/$/, '');
+      window.TeamApi = {
+        getSumData: function(userId) {
+          return fetch(base + '/api/team/sum?userId=' + (userId || '')).then(function(r) { return r.json(); });
+        },
+        getDeals: function(userId, filter) {
+          var url = base + '/api/team/deals?filter=' + (filter || 'personal');
+          if (userId) url += '&userId=' + userId;
+          return fetch(url).then(function(r) { return r.json(); });
+        },
+        addDeal: function(username, userId, avatar, createdBy) {
+          var name = String(username || '').trim().replace(/^@/, '') || 'user';
+          return fetch(base + '/api/deals', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              username: name,
+              appType: 'team',
+              userId: userId,
+              avatar: avatar,
+              createdBy: createdBy
+            })
+          }).then(function(r) { return r.json(); });
+        },
+        updateDealStatus: function(dealId, status, userId) {
+          return fetch(base + '/api/deals/' + dealId, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: status, userId: userId })
+          }).then(function(r) { return r.json(); });
+        },
+        deleteDeal: function(dealId, userId) {
+          return fetch(base + '/api/deals/' + dealId, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: userId })
+          }).then(function(r) { return r.json(); });
+        },
+        getLeaderboard: function() {
+          return fetch(base + '/api/leaderboard').then(function(r) { return r.json(); });
+        },
+        getTasks: function() {
+          var url = base + '/api/tasks';
+          if (currentUser.id) url += '?userId=' + currentUser.id;
+          return fetch(url).then(function(r) { return r.json(); });
+        },
+        createTask: function(title, description, reward) {
+          return fetch(base + '/api/tasks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              title: title,
+              description: description,
+              reward: reward,
+              isAdmin: true // В реальном приложении проверять через Telegram
+            })
+          }).then(function(r) { return r.json(); });
+        },
+        updateTask: function(taskId, userId, action, username, avatar) {
+          return fetch(base + '/api/tasks/' + taskId, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: userId, action: action, username: username, avatar: avatar })
+          }).then(function(r) { return r.json(); });
+        },
+        getGoal: function() {
+          return fetch(base + '/api/goal').then(function(r) { return r.json(); });
+        },
+        saveUser: function(userId, username, avatar) {
+          return fetch(base + '/api/users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: userId, username: username, avatar: avatar })
+          }).then(function(r) { return r.json(); });
+        },
+        getBonuses: function(userId) {
+          return fetch(base + '/api/bonuses?userId=' + (userId || '')).then(function(r) { return r.json(); });
+        },
+        withdrawBonuses: function(userId) {
+          return fetch(base + '/api/bonuses/withdraw', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: userId })
+          }).then(function(r) { return r.json(); });
+        }
+      };
+    })();
+
+    // Основной код приложения
+    (function() {
+      const DEAL_AMOUNT = 2000;
+      const app = document.getElementById('app');
+      const islandSlider = document.getElementById('islandSlider');
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const screenSum = document.getElementById('screen-sum');
+      const screenDeals = document.getElementById('screen-deals');
+      const screenProfile = document.getElementById('screen-profile');
+      const heroSumAll = document.getElementById('heroSumAll');
+      const heroSumPersonal = document.getElementById('heroSumPersonal');
+      const subTabs = document.querySelectorAll('.sub-tab');
+      const dealsList = document.getElementById('dealsList');
+      const addDealBtn = document.getElementById('addDealBtn');
+      const addDealPopup = document.getElementById('addDealPopup');
+      const dealUsername = document.getElementById('dealUsername');
+      const cancelDealBtn = document.getElementById('cancelDealBtn');
+      const submitDealBtn = document.getElementById('submitDealBtn');
+      const confirmDealPopup = document.getElementById('confirmDealPopup');
+      const deleteDealPopup = document.getElementById('deleteDealPopup');
+      const successDealBtn = document.getElementById('successDealBtn');
+      const failedDealBtn = document.getElementById('failedDealBtn');
+      const cancelConfirmBtn = document.getElementById('cancelConfirmBtn');
+      const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+      const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+      const tasksBtn = document.getElementById('tasksBtn');
+      const tasksPopup = document.getElementById('tasksPopup');
+      const tasksList = document.getElementById('tasksList');
+      const closeTasksBtn = document.getElementById('closeTasksBtn');
+      const leaderboardList = document.getElementById('leaderboardList');
+      const profileAvatar = document.getElementById('profileAvatar');
+      const profileName = document.getElementById('profileName');
+      const profileUsername = document.getElementById('profileUsername');
+      const profileDeals = document.getElementById('profileDeals');
+      const profileAmount = document.getElementById('profileAmount');
+      const profileActivity = document.getElementById('profileActivity');
+      const profileBonusCard = document.getElementById('profileBonusCard');
+      const profileBonusHeader = document.getElementById('profileBonusHeader');
+      const profileBonusValue = document.getElementById('profileBonusValue');
+      const profileBonusList = document.getElementById('profileBonusList');
+      const profileGoalCard = document.getElementById('profileGoalCard');
+      const profileGoalText = document.getElementById('profileGoalText');
+
+      // Функция вибрации (без звука)
+      function vibrate(duration) {
+        var vibrateDuration = duration || 50;
+        
+        if (window.Telegram && window.Telegram.WebApp) {
+          try {
+            if (window.Telegram.WebApp.HapticFeedback) {
+              window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+            }
+          } catch (e) {}
+        }
+        
+        if (window.TapticEngine) {
+          try {
+            window.TapticEngine.impact({ style: 'medium' });
+          } catch (e) {}
+        }
+        
+        if (navigator && navigator.vibrate) {
+          try {
+            navigator.vibrate(vibrateDuration);
+          } catch (e) {}
+        }
+      }
+
+      // Добавить вибрацию на все кнопки
+      document.addEventListener('touchstart', function(e) {
+        var target = e.target;
+        var button = target.closest('button');
+        if (button && button.tagName === 'BUTTON') {
+          vibrate(50);
+          button.style.transform = 'scale(0.95)';
+          button.style.transition = 'transform 0.1s ease';
+        }
+      }, { passive: true });
+
+      document.addEventListener('touchend', function(e) {
+        var target = e.target;
+        var button = target.closest('button');
+        if (button && button.tagName === 'BUTTON') {
+          setTimeout(function() {
+            button.style.transform = '';
+          }, 100);
+        }
+      }, { passive: true });
+
+      // Обработчик клика для вибрации (только для визуальной обратной связи, не блокирует клики)
+      document.addEventListener('click', function(e) {
+        var target = e.target;
+        var button = target.closest('button');
+        if (button && button.tagName === 'BUTTON' && !button.hasAttribute('data-no-vibrate')) {
+          vibrate(50);
+        }
+      }, false);
+
+      // Проверка наличия всех элементов
+      if (!app || !islandSlider || !screenSum || !screenDeals || !screenProfile) {
+        console.error('Критические элементы не найдены!');
+        return;
+      }
+
+      // Инициализация
+      app.classList.add('visible');
+      
+      let currentTab = 'sum';
+      let currentPeriod = 'all';
+      let currentFilter = 'personal'; // Всегда только личные сделки
+      let currentDealId = null;
+
+      // Сохраняем данные пользователя для уведомлений
+      if (currentUser.id) {
+        var api = window.TeamApi;
+        if (api) {
+          api.saveUser(currentUser.id, currentUser.username, currentUser.avatar);
+        }
+      }
+
+      // Инициализация данных
+      setTimeout(function() {
+        if (profileName && profileUsername) {
+          updateProfile();
+        }
+        if (heroSumAll && heroSumPersonal) {
+          loadData();
+        }
+        if (addDealBtn) {
+          updateAddDealButtonVisibility();
+        }
+        // Проверяем новые задания при загрузке
+        updateTaskNotification();
+        // Периодически проверяем новые задания
+        setInterval(updateTaskNotification, 30000); // Каждые 30 секунд
+      }, 100);
+
+      // Dynamic Island
+      if (tabBtns && tabBtns.length > 0) {
+        tabBtns.forEach(function(btn) {
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const tab = this.dataset.tab;
+            if (tab === currentTab) return;
+            currentTab = tab;
+            
+            if (tab === 'sum') {
+              islandSlider.className = 'slider';
+            } else if (tab === 'deals') {
+              islandSlider.className = 'slider to-center';
+            } else {
+              islandSlider.className = 'slider to-right';
+            }
+            
+            tabBtns.forEach(function(b) { b.classList.toggle('active', b.dataset.tab === tab); });
+            screenSum.classList.toggle('active', tab === 'sum');
+            screenDeals.classList.toggle('active', tab === 'deals');
+            screenProfile.classList.toggle('active', tab === 'profile');
+            
+            if (tab === 'sum') loadData();
+            if (tab === 'deals') loadDealsData();
+            if (tab === 'profile') updateProfile();
+          });
+        });
+      }
+
+      // Sub-tabs
+      if (subTabs && subTabs.length > 0) {
+        subTabs.forEach(function(btn) {
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            currentPeriod = this.dataset.period;
+            subTabs.forEach(function(b) { b.classList.toggle('active', b.dataset.period === currentPeriod); });
+            loadData();
+          });
+        });
+      }
+
+      function updateAddDealButtonVisibility() {
+        // Кнопка "Добавить сделку" всегда видна (только личные сделки)
+        if (addDealBtn) {
+          addDealBtn.style.display = 'flex';
+        }
+      }
+
+      function formatMoney(n) {
+        return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '\u202f');
+      }
+
+      function escapeHtml(s) {
+        var div = document.createElement('div');
+        div.textContent = s;
+        return div.innerHTML;
+      }
+
+      function loadData() {
+        var api = window.TeamApi;
+        if (!api) return;
+        
+        Promise.all([
+          api.getSumData(currentUser.id),
+          api.getLeaderboard()
+        ]).then(function(arr) {
+          requestAnimationFrame(function() {
+            var sumData = arr[0] || {};
+            var leaderboard = arr[1] || [];
+            
+            var allSum = currentPeriod === 'all' ? sumData.totalAll : currentPeriod === 'month' ? sumData.monthAll : sumData.dayAll;
+            var personalSum = currentPeriod === 'all' ? sumData.totalPersonal : currentPeriod === 'month' ? sumData.monthPersonal : sumData.dayPersonal;
+            
+            heroSumAll.textContent = formatMoney(allSum || 0);
+            heroSumPersonal.textContent = formatMoney(personalSum || 0);
+            
+            applyLeaderboard(leaderboard);
+          });
+        }).catch(function(err) {
+          console.error('Ошибка загрузки данных:', err);
+        });
+      }
+
+      function applyLeaderboard(leaderboard) {
+        if (!leaderboard || leaderboard.length === 0) {
+          leaderboardList.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:16px;font-size:14px;">Пока нет данных</p>';
+          return;
+        }
+        
+        leaderboardList.innerHTML = leaderboard.slice(0, 10).map(function(user, index) {
+          var rank = index + 1;
+          var rankClass = '';
+          if (rank === 1) rankClass = 'gold';
+          else if (rank === 2) rankClass = 'silver';
+          else if (rank === 3) rankClass = 'bronze';
+          
+          var avatarHtml = user.avatar 
+            ? '<img src="' + escapeHtml(user.avatar) + '" alt="">'
+            : '<div class="placeholder">👤</div>';
+          
+          var statsText = user.dealsCount + ' сделок';
+          if (user.tasksCount && user.tasksCount > 0) {
+            statsText += ', ' + user.tasksCount + ' заданий';
+          }
+          
+          return '<div class="leaderboard-item">' +
+            '<div class="leaderboard-rank ' + rankClass + '">' + rank + '</div>' +
+            '<div class="leaderboard-avatar">' + avatarHtml + '</div>' +
+            '<div class="leaderboard-info">' +
+              '<div class="leaderboard-name">' + escapeHtml(user.username) + '</div>' +
+              '<div class="leaderboard-stats">' + statsText + '</div>' +
+            '</div>' +
+            '<div class="leaderboard-deals">' + formatMoney(user.totalAmount) + ' ₽</div>' +
+          '</div>';
+        }).join('');
+      }
+
+      function loadDealsData() {
+        var api = window.TeamApi;
+        if (!api) return;
+        
+        api.getDeals(currentUser.id, currentFilter).then(function(deals) {
+          requestAnimationFrame(function() {
+            applyDealsList(deals || []);
+          });
+        }).catch(function(err) {
+          console.error('Ошибка загрузки сделок:', err);
+          requestAnimationFrame(function() {
+            applyDealsList([]);
+          });
+        });
+      }
+
+      function applyDealsList(list) {
+        if (!list || list.length === 0) {
+          dealsList.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:24px;font-size:14px;">Пока сделок нет. Добавьте первую.</p>';
+          updateAddDealButtonVisibility();
+          return;
+        }
+        
+        dealsList.innerHTML = list.map(function(d) {
+          // В командном приложении админские сделки показываются как 2000₽
+          var sum = d.appType === 'admin' ? 2000 : (d.amount || DEAL_AMOUNT);
+          var status = d.status || 'pending';
+          var statusIndicator = '';
+          if (status === 'success') {
+            statusIndicator = '<div class="deal-status-indicator success"></div>';
+          } else if (status === 'failed') {
+            statusIndicator = '<div class="deal-status-indicator failed"></div>';
+          }
+          
+          var canEdit = !d.userId || String(d.userId) === String(currentUser.id);
+          var dealClass = canEdit ? '' : ' style="opacity: 0.7;"';
+          
+          // В общем боте показываем только username (без createdBy)
+          var displayText = escapeHtml(d.username || 'неизвестный');
+          
+          // Форматируем дату создания сделки (формат: 26.02.26)
+          var dealDate = d.date ? new Date(d.date) : new Date();
+          var day = String(dealDate.getDate()).padStart(2, '0');
+          var month = String(dealDate.getMonth() + 1).padStart(2, '0');
+          var year = String(dealDate.getFullYear()).slice(-2);
+          var dateStr = day + '.' + month + '.' + year;
+          
+          return '<div class="deal-card" data-deal-id="' + escapeHtml(d.id) + '" data-deal-status="' + status + '" data-can-edit="' + canEdit + '"' + dealClass + '>' +
+            statusIndicator +
+            '<div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">' +
+              '<div class="deal-user">' + displayText + ' <span>TG</span></div>' +
+              '<div class="deal-date" style="font-size: 11px; color: var(--text-muted);">' + dateStr + '</div>' +
+            '</div>' +
+            '<div class="deal-sum">' + formatMoney(sum) + ' ₽</div>' +
+          '</div>';
+        }).join('');
+        
+        updateAddDealButtonVisibility();
+        
+        var dealCards = document.querySelectorAll('.deal-card[data-deal-id]');
+        dealCards.forEach(function(card) {
+          card.addEventListener('click', function() {
+            var dealId = this.dataset.dealId;
+            var status = this.dataset.dealStatus;
+            var canEdit = this.dataset.canEdit === 'true';
+            
+            if (!canEdit) return;
+            
+            currentDealId = dealId;
+            
+            if (status === 'pending') {
+              confirmDealPopup.classList.add('visible');
+            } else {
+              deleteDealPopup.classList.add('visible');
+            }
+          });
+        });
+      }
+
+      function updateProfile() {
+        profileName.textContent = currentUser.firstName + (currentUser.lastName ? ' ' + currentUser.lastName : '');
+        profileUsername.textContent = '@' + currentUser.username;
+        
+        if (currentUser.avatar) {
+          profileAvatar.innerHTML = '<img src="' + escapeHtml(currentUser.avatar) + '" alt="">';
+        } else {
+          profileAvatar.innerHTML = '<div class="placeholder">👤</div>';
+        }
+        
+        var api = window.TeamApi;
+        if (!api) return;
+        
+        Promise.all([
+          api.getSumData(currentUser.id),
+          api.getDeals(currentUser.id, 'personal')
+        ]).then(function(arr) {
+          var sumData = arr[0] || {};
+          var deals = arr[1] || [];
+          
+          var successfulDeals = deals.filter(function(d) { return d.status === 'success'; });
+          profileDeals.textContent = successfulDeals.length;
+          profileAmount.textContent = formatMoney(sumData.totalPersonal || 0) + ' ₽';
+          
+          // Активность: только за день, одна сделка = 10%
+          var today = new Date();
+          today.setHours(0, 0, 0, 0);
+          var dayDeals = deals.filter(function(d) {
+            var dealDate = new Date(d.date);
+            dealDate.setHours(0, 0, 0, 0);
+            return dealDate.getTime() === today.getTime() && d.status === 'success';
+          });
+          var activity = dayDeals.length * 10;
+          if (activity > 100) activity = 100;
+          profileActivity.textContent = activity + '%';
+          
+          // Загружаем бонусы и цель
+          loadBonuses();
+          loadGoal();
+        }).catch(function(err) {
+          console.error('Ошибка загрузки профиля:', err);
+        });
+      }
+
+      // Добавить сделку
+      if (addDealBtn) {
+        addDealBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (dealUsername) dealUsername.value = '';
+          if (addDealPopup) addDealPopup.classList.add('visible');
+          setTimeout(function() { if (dealUsername) dealUsername.focus(); }, 300);
+        });
+      }
+
+      if (cancelDealBtn) {
+        cancelDealBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (addDealPopup) addDealPopup.classList.remove('visible');
+        });
+      }
+
+      if (addDealPopup) {
+        addDealPopup.addEventListener('click', function(e) {
+          if (e.target === addDealPopup) {
+            addDealPopup.classList.remove('visible');
+          }
+        });
+      }
+
+      if (submitDealBtn) {
+        submitDealBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+        var username = (dealUsername.value || '').trim().replace(/^@/, '');
+        if (!username) return;
+        
+        var api = window.TeamApi;
+        if (!api) {
+          addDealPopup.classList.remove('visible');
+          return;
+        }
+        
+        // Закрываем попап сразу, чтобы предотвратить двойной клик
+        addDealPopup.classList.remove('visible');
+        
+        api.addDeal(username, currentUser.id, currentUser.avatar, currentUser.firstName).then(function() {
+          currentTab = 'deals';
+          islandSlider.className = 'slider to-center';
+          tabBtns.forEach(function(b) { b.classList.toggle('active', b.dataset.tab === 'deals'); });
+          screenSum.classList.remove('active');
+          screenDeals.classList.add('active');
+          screenProfile.classList.remove('active');
+          loadDealsData();
+          loadData();
+          updateProfile();
+        }).catch(function(err) {
+          console.error('Ошибка добавления сделки:', err);
+        });
+        });
+      }
+
+      if (dealUsername && submitDealBtn) {
+        dealUsername.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            submitDealBtn.click();
+          }
+        });
+      }
+
+      // Подтверждение сделки
+      function closeConfirmPopup() {
+        confirmDealPopup.classList.remove('visible');
+        currentDealId = null;
+      }
+
+      if (cancelConfirmBtn) {
+        cancelConfirmBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          closeConfirmPopup();
+        });
+      }
+      
+      if (confirmDealPopup) {
+        confirmDealPopup.addEventListener('click', function(e) {
+          if (e.target === confirmDealPopup) closeConfirmPopup();
+        });
+      }
+
+      if (successDealBtn) {
+        successDealBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (!currentDealId) return;
+          var api = window.TeamApi;
+          if (!api) { closeConfirmPopup(); return; }
+          api.updateDealStatus(currentDealId, 'success', currentUser.id).then(function() {
+            closeConfirmPopup();
+            loadDealsData();
+            loadData();
+            updateProfile();
+          }).catch(function(err) {
+            console.error('Ошибка обновления сделки:', err);
+          });
+        });
+      }
+
+      if (failedDealBtn) {
+        failedDealBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (!currentDealId) return;
+          var api = window.TeamApi;
+          if (!api) { closeConfirmPopup(); return; }
+          api.updateDealStatus(currentDealId, 'failed', currentUser.id).then(function() {
+            closeConfirmPopup();
+            loadDealsData();
+            loadData();
+            updateProfile();
+          }).catch(function(err) {
+            console.error('Ошибка обновления сделки:', err);
+          });
+        });
+      }
+
+      // Удаление сделки
+      function closeDeletePopup() {
+        deleteDealPopup.classList.remove('visible');
+        currentDealId = null;
+      }
+
+      if (cancelDeleteBtn) {
+        cancelDeleteBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          closeDeletePopup();
+        });
+      }
+      
+      if (deleteDealPopup) {
+        deleteDealPopup.addEventListener('click', function(e) {
+          if (e.target === deleteDealPopup) closeDeletePopup();
+        });
+      }
+
+      if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (!currentDealId) return;
+          var api = window.TeamApi;
+          if (!api) { closeDeletePopup(); return; }
+          api.deleteDeal(currentDealId, currentUser.id).then(function() {
+            closeDeletePopup();
+            loadDealsData();
+            loadData();
+            updateProfile();
+          }).catch(function(err) {
+            console.error('Ошибка удаления сделки:', err);
+          });
+        });
+      }
+
+      // Функция для сохранения просмотренных заданий
+      function markTasksAsViewed() {
+        if (!currentUser.id) return;
+        var api = window.TeamApi;
+        if (!api) return;
+        
+        api.getTasks().then(function(tasks) {
+          var taskIds = tasks.map(function(t) { return t.id; });
+          localStorage.setItem('viewedTasks_' + currentUser.id, JSON.stringify(taskIds));
+          updateTaskNotification();
+        }).catch(function(err) {
+          console.error('Ошибка загрузки заданий:', err);
+        });
+      }
+
+      // Функция для обновления индикатора уведомлений
+      function updateTaskNotification() {
+        if (!tasksBtn) return;
+        if (!currentUser || !currentUser.id) {
+          // Если пользователь еще не загружен, пробуем через 500мс
+          setTimeout(updateTaskNotification, 500);
+          return;
+        }
+        
+        var api = window.TeamApi;
+        if (!api) return;
+        
+        api.getTasks().then(function(tasks) {
+          if (!tasks || tasks.length === 0) {
+            var badge = tasksBtn.querySelector('.notification-badge');
+            if (badge) badge.remove();
+            return;
+          }
+          
+          // Фильтруем только неподтвержденные задания
+          var filteredTasks = tasks.filter(function(task) {
+            var isConfirmed = task.completedBy && task.completedBy.includes(String(currentUser.id));
+            return !isConfirmed;
+          });
+          
+          var viewedTasks = localStorage.getItem('viewedTasks_' + currentUser.id);
+          var viewed = viewedTasks ? JSON.parse(viewedTasks) : [];
+          
+          var hasNew = filteredTasks.some(function(task) {
+            return !viewed.includes(task.id);
+          });
+          
+          if (hasNew) {
+            if (!tasksBtn.querySelector('.notification-badge')) {
+              var badge = document.createElement('div');
+              badge.className = 'notification-badge';
+              tasksBtn.appendChild(badge);
+            }
+          } else {
+            var badge = tasksBtn.querySelector('.notification-badge');
+            if (badge) badge.remove();
+          }
+        }).catch(function(err) {
+          console.error('Ошибка проверки заданий:', err);
+        });
+      }
+
+      // Задания
+      if (tasksBtn) {
+        tasksBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          loadTasks();
+          if (tasksPopup) {
+            tasksPopup.classList.add('visible');
+            // Отмечаем задания как просмотренные при открытии попапа
+            markTasksAsViewed();
+          }
+        });
+      }
+
+      if (closeTasksBtn) {
+        closeTasksBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (tasksPopup) tasksPopup.classList.remove('visible');
+        });
+      }
+
+      if (tasksPopup) {
+        tasksPopup.addEventListener('click', function(e) {
+          if (e.target === tasksPopup) {
+            tasksPopup.classList.remove('visible');
+          }
+        });
+      }
+
+      function loadTasks() {
+        var api = window.TeamApi;
+        if (!api) return;
+        
+        api.getTasks().then(function(tasks) {
+          applyTasksList(tasks || []);
+          updateTaskNotification();
+        }).catch(function(err) {
+          console.error('Ошибка загрузки заданий:', err);
+          applyTasksList([]);
+        });
+      }
+
+      function applyTasksList(tasks) {
+        if (!tasks || tasks.length === 0) {
+          if (tasksList) tasksList.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:24px;font-size:14px;">Пока заданий нет</p>';
+          return;
+        }
+        
+        // Фильтруем: показываем только задания, которые не подтверждены пользователем
+        var filteredTasks = tasks.filter(function(task) {
+          var isConfirmed = task.completedBy && task.completedBy.includes(String(currentUser.id));
+          return !isConfirmed; // Показываем только неподтвержденные
+        });
+        
+        if (filteredTasks.length === 0) {
+          if (tasksList) tasksList.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:24px;font-size:14px;">Все задания выполнены</p>';
+          return;
+        }
+        
+        if (tasksList) {
+          tasksList.innerHTML = filteredTasks.map(function(task) {
+            var isPending = task.pendingCompletions && task.pendingCompletions.some(function(p) {
+              return String(p.userId) === String(currentUser.id);
+            });
+            var pendingClass = isPending ? 'pending' : '';
+            
+            return '<div class="task-item ' + pendingClass + '">' +
+              '<div class="task-title">' + escapeHtml(task.title) + '</div>' +
+              '<div class="task-description">' + escapeHtml(task.description) + '</div>' +
+              '<div class="task-reward">Награда: ' + formatMoney(task.reward || 0) + ' ₽</div>' +
+              '<div class="task-actions">' +
+                (isPending 
+                  ? '<div style="padding: 8px; text-align: center; color: var(--gold); font-size: 13px; font-weight: 600;">Ожидает подтверждения</div>'
+                  : '<button class="task-btn complete" data-task-id="' + escapeHtml(task.id) + '">Выполнено</button>'
+                ) +
+              '</div>' +
+            '</div>';
+          }).join('');
+          
+          var taskBtns = tasksList.querySelectorAll('.task-btn');
+          taskBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              var taskId = this.dataset.taskId;
+              var action = 'complete';
+              
+              var api = window.TeamApi;
+              if (!api) return;
+              
+              api.updateTask(taskId, currentUser.id, action, currentUser.username, currentUser.avatar).then(function() {
+                loadTasks();
+              }).catch(function(err) {
+                console.error('Ошибка обновления задания:', err);
+              });
+            });
+          });
+        }
+      }
+
+      // Загрузка бонусов (только подтвержденные и невыведенные задания)
+      function loadBonuses() {
+        var api = window.TeamApi;
+        if (!api || !currentUser.id) return;
+        
+        // Получаем информацию о бонусах и времени до следующего вывода
+        api.getBonuses(currentUser.id).then(function(bonusInfo) {
+          // Используем totalBonus и availableTasks из API, который уже учитывает выведенные бонусы
+          var totalBonus = bonusInfo.totalBonus || 0;
+          var confirmedTasks = bonusInfo.availableTasks || [];
+          
+          if (profileBonusValue) profileBonusValue.textContent = formatMoney(totalBonus) + ' ₽';
+          
+          if (totalBonus === 0 || confirmedTasks.length === 0) {
+            if (profileBonusList) profileBonusList.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:12px;font-size:13px;">Нет доступных бонусов</p>';
+          } else {
+            if (profileBonusList) {
+              var canWithdraw = bonusInfo.canWithdraw !== false && totalBonus > 0;
+              var timeUntilNext = bonusInfo.timeUntilNext || 0;
+              
+              var withdrawButtonHtml = '';
+              if (totalBonus > 0) {
+                if (canWithdraw) {
+                  withdrawButtonHtml = '<button class="profile-bonus-withdraw-btn" id="withdrawBonusesBtn" style="width: 100%; padding: 12px; margin-top: 12px; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%); border: none; border-radius: 12px; color: #0a0a0a; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">Вывести в личный доход</button>';
+                } else {
+                  var daysText = timeUntilNext === 1 ? 'день' : timeUntilNext < 5 ? 'дня' : 'дней';
+                  withdrawButtonHtml = '<div style="width: 100%; padding: 12px; margin-top: 12px; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px; text-align: center; color: var(--text-muted); font-size: 13px;">Вывод доступен через ' + timeUntilNext + ' ' + daysText + '</div>';
+                }
+              }
+              
+              profileBonusList.innerHTML = confirmedTasks.map(function(task) {
+                return '<div class="profile-bonus-item">' +
+                  '<div class="profile-bonus-item-title">' + escapeHtml(task.title) + '</div>' +
+                  '<div class="profile-bonus-item-reward">+' + formatMoney(task.reward) + ' ₽</div>' +
+                '</div>';
+              }).join('') + withdrawButtonHtml;
+              
+              // Добавляем обработчик для кнопки вывода
+              var withdrawBtn = document.getElementById('withdrawBonusesBtn');
+              if (withdrawBtn) {
+                withdrawBtn.addEventListener('click', function(e) {
+                  e.stopPropagation();
+                  if (!currentUser.id) return;
+                  
+                  var api = window.TeamApi;
+                  if (!api) return;
+                  
+                  if (confirm('Вы уверены, что хотите вывести ' + formatMoney(totalBonus) + ' ₽ в личный доход?')) {
+                    api.withdrawBonuses(currentUser.id).then(function(result) {
+                      if (result.error) {
+                        alert(result.error);
+                      } else {
+                        alert('Бонусы успешно выведены в личный доход!');
+                        loadBonuses();
+                        loadData();
+                        updateProfile();
+                      }
+                    }).catch(function(err) {
+                      console.error('Ошибка вывода бонусов:', err);
+                      alert('Ошибка вывода бонусов');
+                    });
+                  }
+                });
+              }
+            }
+          }
+        }).catch(function(err) {
+          console.error('Ошибка загрузки бонусов:', err);
+        });
+      }
+
+      // Загрузка цели
+      function loadGoal() {
+        var api = window.TeamApi;
+        if (!api) return;
+        
+        api.getGoal().then(function(goal) {
+          if (goal && goal.text) {
+            profileGoalText.textContent = goal.text;
+          } else {
+            profileGoalText.textContent = 'Цель не установлена';
+          }
+        }).catch(function(err) {
+          console.error('Ошибка загрузки цели:', err);
+        });
+      }
+
+      // Разворачивание блока бонусов
+      if (profileBonusHeader) {
+        profileBonusHeader.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (profileBonusCard) {
+            profileBonusCard.classList.toggle('expanded');
+            vibrate(30);
+          }
+        });
+      }
+
+      window.TeamRefresh = function() {
+        loadData();
+        loadDealsData();
+        updateProfile();
+      };
+    })();
+  </script>
+</body>
+</html>
+
